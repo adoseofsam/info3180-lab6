@@ -1,10 +1,25 @@
 /* Add your Application JavaScript */
-const app = Vue.createApp({
-  data() {
-    return {
-      welcome: 'Hello World! Welcome to VueJS'
-    }
+const Home = {
+    name: 'Home',
+    template: `
+       <div class="home">
+           <img src="/static/images/logo.png" alt="VueJS Logo">
+           <h1>{{ welcome }}</h1>
+       </div>
+ `,
+data() {
+  return {
+     welcome: 'Hello World! Welcome to VueJS'
   }
+ }
+};
+
+const router = VueRouter.createRouter({
+  history: VueRouter.createWebHistory(),
+  routes: [
+      { path: '/', component: Home },
+      { path: '/news', component: NewsList }
+  ]
 });
 
 app.component('app-header', {
@@ -20,10 +35,10 @@ app.component('app-header', {
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                  <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                  <router-link to="/" class="nav-link">Home</router-link>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#">News</a>
+                  <router-link to="/" class="nav-link">News</router-link>
                 </li>
               </ul>
             </div>
@@ -33,6 +48,86 @@ app.component('app-header', {
   data: function() {
     return {};
   }
+});
+
+const NewsList = {
+  name: 'NewsList',
+  template: `
+        <div id = "temp" class="form-inline d-flex justify-content-center">
+          <div class="form-group mx-sm-3 mb-2">
+               <label class="sr-only" for="search">Search</label>
+               <input type="search" name="search" v-model="searchTerm"id="search" class="form-control mb-2 mr-sm-2" placeholder="Enter search term here" />
+               <button class="btn btn-primary mb-2"@click="searchNews">Search</button>
+             </div>
+             <p>You are searching for {{ searchTerm }}</p>
+        
+          <div class="news">
+             <h2>News</h2>
+             <ul class="news__list">
+                <li v-for="article in articles"class="news__item">
+                <b>{{ article.title }}</b>
+                <br>
+                <img class="photos" v-bind:src='article.urlToImage'/>
+                <br>
+                  {{ article.description }}
+                  <br>
+                  <br>
+                </li>
+             </ul>
+</div>
+`,
+  created() {
+    let self = this;
+      fetch('https://newsapi.org/v2/top-headlines?country=us',
+{
+  headers: {
+      'Authorization': 'Bearer 82d465171a664d9199b229f587a9f09f'
+  }
+})
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        console.log(data);
+        self.articles = data.articles;
+      });
+  },
+  data() {
+    return{
+      articles: [],
+      searchTerm:''
+    }
+  },
+  methods: {
+      searchNews() {
+          let self = this;
+
+          fetch('https://newsapi.org/v2/everything?q='+ self.searchTerm + '&language=en', {
+  headers: {
+      'Authorization': 'Bearer <your-api-token>'
+  }
+})
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        console.log(data);
+        self.articles = data.articles;
+      });
+    }
+  }
+};
+
+const app = Vue.createApp({
+  data() {
+    return {
+      welcome: 'Hello World! Welcome to VueJS'
+    }
+  },
+  components: {
+ 'home': Home,
+ 'news-list': NewsList
+ }
 });
 
 app.component('app-footer', {
@@ -51,4 +146,5 @@ app.component('app-footer', {
   }
 })
 
+app.use(router)
 app.mount('#app');
