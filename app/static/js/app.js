@@ -18,25 +18,26 @@ const NewsList = {
     name: 'NewsList',
     template: `
       <div id = "temp" class="form-inline d-flex justify-content-center">
-        <div class="form-group mx-sm-3 mb-2">
-     <label class="sr-only" for="search">Search</label>
-     <input type="search" name="search" v-model="searchTerm"id="search" class="form-control mb-2 mr-sm-2" placeholder="Enter search term here" />
-    <button class="btn btn-primary mb-2" @click="searchNews">Search</button>
- </div>
-<p>You are searching for {{ searchTerm }}</p>
-<div class="news">
- <h2 class ="text-center">News</h2>
- <ul class="news__list">
-    <li v-for="article in articles" class="news__item">
-    <b>{{ article.title }}</b>
-    <br>
-    <img class="photo" v-bind:src="article.urlToImage"/>
-    <br>
-    {{ article.description }}
-    <br>
-    <br>
-</li>
-</ul>
+         <div class="form-group mx-sm-3 mb-2">
+         <label class="sr-only" for="search">Search</label>
+         <input type="search" name="search" v-model="searchTerm"id="search" class="form-control mb-2 mr-sm-2" placeholder="Enter search term here" />
+         <button class="btn btn-primary mb-2" @click="searchNews">Search</button>
+     </div>
+      <p>You are searching for {{ searchTerm }}</p>
+      <div class="news">
+       <h2 class ="text-center">News</h2>
+       <ul class="news__list">
+          <li v-for="article in articles" class="news__item">
+          <b>{{ article.title }}</b>
+          <br>
+          <img class="photo" v-bind:src="article.urlToImage"/>
+          <br>
+          {{ article.description }}
+          <br>
+          <br>
+        </li>
+      </ul>
+    </div>
 </div>
 `,
     created() {
@@ -44,7 +45,7 @@ const NewsList = {
 
         fetch('https://newsapi.org/v2/top-headlines?country=us', {
                 headers: {
-                    'Authorization': '82d465171a664d9199b229f587a9f09f'
+                    'Authorization': '<your-api-key>'
                 }
             })
             .then(function(response) {
@@ -67,7 +68,7 @@ const NewsList = {
             fetch('https://newsapi.org/v2/everything?q=' +
                     self.searchTerm + '&language=en', {
                         headers: {
-                            'Authorization': '82d465171a664d9199b229f587a9f09f'
+                            'Authorization': '<your-api-key'
                         }
                     })
                 .then(function(response) {
